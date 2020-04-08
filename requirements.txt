@@ -1,0 +1,5 @@
+-e git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver
+black==19.10b0
+pytest==5.4.1
+retry==0.9.2
+furl==2.1.0
