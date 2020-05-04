@@ -74,7 +74,7 @@ class TweetCapture:
 
     @staticmethod
     def get_screen_capture_file_path_quoted_tweet(tweet_id) -> str:
-        return SCREEN_SHOT_DIR_PATH.joinpath(f"tweet_capture_{tweet_id}.png")
+        return str(SCREEN_SHOT_DIR_PATH.joinpath(f"tweet_capture_{tweet_id}.png"))
 
     def screen_shot_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
