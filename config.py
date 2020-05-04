@@ -1,8 +1,6 @@
 from configparser import ConfigParser
 from pathlib import Path
-import os
 
-PROJECT_DIR_PATH = os.path.dirname(__file__)
 CONFIG_PATH = str(Path.cwd().joinpath("conf", "config.ini"))
 
 config = ConfigParser()
