@@ -1,4 +1,7 @@
 .DS_Store
 .python-version
 .idea/
+*.log
+conf/config.ini
 screen_shots/
+__pycache__/

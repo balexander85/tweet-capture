@@ -1,0 +1,17 @@
+#!/bin/sh
+FILES=$(git diff --diff-filter=rd --cached --name-only -- . ':!*.json' ':!*.txt' ':!*.gitignore' ':!pre-commit' | sed 's| |\\ |g')
+[ -z "$FILES" ] && exit 0
+
+# Run black formatter all selected files
+echo "$FILES" | xargs black
+
+# Reset the modified/prettified files to staging
+echo "$FILES" | xargs git reset
+
+# Run automated tests
+pytest tests/test_tweet_capture.py || exit 1
+
+# Add back the modified/prettified files to staging
+echo "$FILES" | xargs git add
+
+exit 0

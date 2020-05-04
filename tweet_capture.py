@@ -1,6 +1,7 @@
 import os
 
 from furl import furl
+from retry import retry
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
@@ -34,7 +35,7 @@ class TweetCapture:
         return self
 
     def __exit__(self, *args):
-        self.driver.quit_driver()
+        self.quit()
 
     def _wait_until_loaded(self) -> bool:
         return self.driver.wait_for_element_to_be_visible_by_css(
@@ -46,6 +47,7 @@ class TweetCapture:
         self.driver.open(url=url)
         self._wait_until_loaded()
 
+    @retry(exceptions=TimeoutException, tries=4, delay=2)
     def get_tweet_element(self, tweet_locator) -> WebElement:
         """WebElement of the Tweet Div, this assumes tweet page has loaded"""
         LOGGER.debug(f"Retrieving tweet_element")
@@ -101,3 +103,7 @@ class TweetCapture:
             raise Exception(f"Failed to save {screen_capture_file_path}")
         else:
             return screen_capture_file_path
+
+    def quit(self):
+        """Close driver"""
+        self.driver.quit_driver()
