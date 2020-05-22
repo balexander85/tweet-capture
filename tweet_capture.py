@@ -10,8 +10,9 @@ from config import CHROME_DRIVER_PATH
 from _logger import LOGGER
 
 
-BASE_DIR = Path.cwd().parent
-SCREEN_SHOT_DIR_PATH = BASE_DIR.joinpath("screen_shots")
+SCREEN_SHOT_DIR_PATH = Path("screenshots")
+# create directory if none exist
+SCREEN_SHOT_DIR_PATH.mkdir(exist_ok=True)
 TWITTER_URL = "https://twitter.com"
 TWITTER_USER_AGENT = (
     "user-agent=Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
@@ -73,10 +74,6 @@ class TweetCapture:
             LOGGER.debug(f"Tombstone warning was not present {e}")
             pass
 
-    @staticmethod
-    def get_screen_capture_file_path_quoted_tweet(tweet_id) -> str:
-        return str(SCREEN_SHOT_DIR_PATH.joinpath(f"tweet_capture_{tweet_id}.png"))
-
     def screen_shot_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
         self.open(url=url)
@@ -85,8 +82,8 @@ class TweetCapture:
         self.driver.scroll_to_element(
             element=self.get_tweet_element(tweet_locator=tweet_locator)
         )
-        screen_capture_file_path = self.get_screen_capture_file_path_quoted_tweet(
-            tweet_id=tweet_id
+        screen_capture_file_path = str(
+            SCREEN_SHOT_DIR_PATH.joinpath(f"tweet_capture_{tweet_id}.png")
         )
         # move mouse cursor away to highlight any @users
         self.driver.scroll_to_element(

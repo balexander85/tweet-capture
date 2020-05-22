@@ -15,13 +15,3 @@ def test_tweet_screen_shot_tweet():
     assert screen_cap_file_path == path.join(
         SCREEN_SHOT_DIR_PATH, f"tweet_capture_{tweet_id}.png"
     )
-
-
-def test_tweet_capture_get_screen_capture_file_path_quoted_tweet():
-    """
-    Verify functionality tweet_capture module
-    """
-    tweet_id = 1215708312249028609
-    assert path.join(
-        SCREEN_SHOT_DIR_PATH, f"tweet_capture_{tweet_id}.png"
-    ) == TweetCapture.get_screen_capture_file_path_quoted_tweet(tweet_id=tweet_id)

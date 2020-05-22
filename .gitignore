@@ -3,5 +3,5 @@
 .idea/
 *.log
 conf/config.ini
-screen_shots/
+screenshots/
 __pycache__/
