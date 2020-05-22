@@ -1,7 +1,8 @@
 from configparser import ConfigParser
 from pathlib import Path
 
-CONFIG_PATH = str(Path.cwd().joinpath("conf", "config.ini"))
+BASE_DIR = Path.cwd().parent
+CONFIG_PATH = str(BASE_DIR.joinpath("conf", "config.ini"))
 
 config = ConfigParser()
 config.read(CONFIG_PATH)

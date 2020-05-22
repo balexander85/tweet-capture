@@ -10,7 +10,8 @@ from config import CHROME_DRIVER_PATH
 from _logger import LOGGER
 
 
-SCREEN_SHOT_DIR_PATH = Path.cwd().joinpath("screen_shots")
+BASE_DIR = Path.cwd().parent
+SCREEN_SHOT_DIR_PATH = BASE_DIR.joinpath("screen_shots")
 TWITTER_URL = "https://twitter.com"
 TWITTER_USER_AGENT = (
     "user-agent=Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
