@@ -93,7 +93,7 @@ class TweetCapture:
         # to be implemented
         # Check for "This media may contain sensitive material."
         self.dismiss_sensitive_material_warning()
-        LOGGER.info(msg=f"Saving screen shot: {screen_capture_file_path}")
+        LOGGER.info(msg=f"Saving screenshot: {screen_capture_file_path}")
         if not self.get_tweet_element(tweet_locator=tweet_locator).screenshot(
             filename=screen_capture_file_path
         ):
