@@ -10,9 +10,6 @@ from config import CHROME_DRIVER_PATH
 from _logger import LOGGER
 
 
-SCREEN_SHOT_DIR_PATH = Path("screenshots")
-# create directory if none exist
-SCREEN_SHOT_DIR_PATH.mkdir(exist_ok=True)
 TWITTER_URL = "https://twitter.com"
 TWITTER_USER_AGENT = (
     "user-agent=Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
@@ -25,7 +22,14 @@ class TweetCapture:
     TWITTER_BODY = "body"
     TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
-    def __init__(self):
+    def __init__(self, screenshot_dir: Path = None):
+        self.screenshot_dir = (
+            screenshot_dir.joinpath("screenshots")
+            if screenshot_dir
+            else Path("screenshots")
+        )
+        # create directory if none exist
+        self.screenshot_dir.mkdir(exist_ok=True)
         self.driver = WrappedDriver(
             chrome_driver_path=CHROME_DRIVER_PATH,
             browser="chrome",
@@ -74,7 +78,7 @@ class TweetCapture:
             LOGGER.debug(f"Tombstone warning was not present {e}")
             pass
 
-    def screen_shot_tweet(self, url) -> str:
+    def screen_capture_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
         self.open(url=url)
         tweet_id = furl(url).path.segments[-1]
@@ -83,7 +87,7 @@ class TweetCapture:
             element=self.get_tweet_element(tweet_locator=tweet_locator)
         )
         screen_capture_file_path = str(
-            SCREEN_SHOT_DIR_PATH.joinpath(f"tweet_capture_{tweet_id}.png")
+            self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
         )
         # move mouse cursor away to highlight any @users
         self.driver.scroll_to_element(
