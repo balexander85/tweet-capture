@@ -20,6 +20,7 @@ class TweetCapture:
     """Page object representing div of a tweet"""
 
     TWITTER_BODY = "body"
+    TWITTER_SECTION = "main div section"
     TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
     def __init__(self, screenshot_dir: Path = None, headless: bool = True):
@@ -34,7 +35,7 @@ class TweetCapture:
             chrome_driver_path=CHROME_DRIVER_PATH,
             browser="chrome",
             headless=headless,
-            user_agent=TWITTER_USER_AGENT,
+            # user_agent=TWITTER_USER_AGENT,
         )
 
     def __enter__(self):
@@ -45,7 +46,7 @@ class TweetCapture:
 
     def _wait_until_loaded(self) -> bool:
         return self.driver.wait_for_element_to_be_visible_by_css(
-            locator=self.TWITTER_BODY
+            locator=self.TWITTER_SECTION
         )
 
     def open(self, url: str):
@@ -59,11 +60,11 @@ class TweetCapture:
         LOGGER.debug(f"Retrieving tweet_element")
         try:
             self.driver.wait_for_element_to_be_present_by_css(
-                locator=tweet_locator, timeout=10, poll_frequency=1
+                locator=self.TWITTER_SECTION, timeout=10, poll_frequency=1
             )
-            return self.driver.get_element_by_css(locator=tweet_locator)
+            return self.driver.get_element_by_css(locator=self.TWITTER_SECTION)
         except TimeoutException as e:
-            LOGGER.error(f"{e} timed out looking for: {tweet_locator}")
+            LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
             self.driver.quit_driver()
             raise TimeoutException
 
@@ -84,7 +85,7 @@ class TweetCapture:
         tweet_id = furl(url).path.segments[-1]
         tweet_locator = f"div[data-tweet-id='{tweet_id}']"
         self.driver.scroll_to_element(
-            element=self.get_tweet_element(tweet_locator=tweet_locator)
+            element=self.get_tweet_element(tweet_locator=self.TWITTER_SECTION)
         )
         screen_capture_file_path = str(
             self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
