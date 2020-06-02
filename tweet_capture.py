@@ -22,7 +22,7 @@ class TweetCapture:
     TWITTER_BODY = "body"
     TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
-    def __init__(self, screenshot_dir: Path = None):
+    def __init__(self, screenshot_dir: Path = None, headless: bool = True):
         self.screenshot_dir = (
             screenshot_dir.joinpath("screenshots")
             if screenshot_dir
@@ -33,7 +33,7 @@ class TweetCapture:
         self.driver = WrappedDriver(
             chrome_driver_path=CHROME_DRIVER_PATH,
             browser="chrome",
-            headless=True,
+            headless=headless,
             user_agent=TWITTER_USER_AGENT,
         )
 
