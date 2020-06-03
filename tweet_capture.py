@@ -20,7 +20,9 @@ class TweetCapture:
     """Page object representing div of a tweet"""
 
     TWITTER_BODY = "body"
-    TWITTER_SECTION = "main div section"
+    TWITTER_SECTION = (
+        "main div section div[aria-label='Timeline: Conversation'] div div div"
+    )
     TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
     def __init__(self, screenshot_dir: Path = None, headless: bool = True):
