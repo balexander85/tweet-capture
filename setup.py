@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     install_requires=["selenium", "furl", "retry", "pytest", "WrappedDriver"],
     dependency_links=[
-        "git+ssh://git@github.com/balexander85/WrappedDriver.git#egg=WrappedDriver"
+        "-e git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver"
     ],
     include_package_data=False,
     license="MIT License",
