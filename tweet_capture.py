@@ -104,7 +104,7 @@ class TweetCapture:
         tweet_text_match = {}
         for index, tweet_element in enumerate(tweet_elements):
             tweet_text = tweet_element.text
-            LOGGER.info(f"Index: {index} - {tweet_text}")
+            LOGGER.debug(f"Index: {index} - {tweet_text}")
             match_count = len(
                 [w for w in self.driver.title.split(" ") if w not in tweet_text]
             )
