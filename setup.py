@@ -11,7 +11,7 @@ setup(
     name="tweet_capture",
     version="0.1",
     packages=find_packages(),
-    install_requires=["selenium"],
+    install_requires=["selenium", "furl"],
     include_package_data=False,
     license="MIT License",
     description="A simple wrapper for selenium webdriver.",
