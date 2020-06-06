@@ -11,7 +11,7 @@ setup(
     name="tweet_capture",
     version="0.1",
     packages=find_packages(),
-    install_requires=["selenium", "furl", "retry", "pytest"],
+    install_requires=["selenium", "furl", "retry", "pytest", "WrappedDriver>=0.1"],
     dependency_links=[
         "git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver"
     ],
