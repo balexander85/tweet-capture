@@ -14,15 +14,18 @@ TWITTER_URL = "https://twitter.com"
 TWITTER_USER_AGENT = (
     "user-agent=Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
 )
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/49.0.2656.18 Safari/537.36"
+)
 
 
 class TweetCapture:
     """Page object representing div of a tweet"""
 
     TWITTER_BODY = "body"
-    TWITTER_SECTION = (
-        "main div section div[aria-label='Timeline: Conversation'] div div div"
-    )
+    TWITTER_SECTION = "div[aria-label='Timeline: Conversation'] div div div article"
     TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
     def __init__(self, screenshot_dir: Path = None, headless: bool = True):
@@ -37,7 +40,7 @@ class TweetCapture:
             chrome_driver_path=CHROME_DRIVER_PATH,
             browser="chrome",
             headless=headless,
-            # user_agent=TWITTER_USER_AGENT,
+            user_agent=USER_AGENT,
         )
 
     def __enter__(self):
@@ -85,25 +88,32 @@ class TweetCapture:
         """Take a screenshot of tweet and save to file"""
         self.open(url=url)
         tweet_id = furl(url).path.segments[-1]
-        tweet_locator = f"div[data-tweet-id='{tweet_id}']"
-        self.driver.scroll_to_element(
-            element=self.get_tweet_element(tweet_locator=self.TWITTER_SECTION)
-        )
         screen_capture_file_path = str(
             self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
         )
-        # move mouse cursor away to highlight any @users
-        self.driver.scroll_to_element(
-            self.get_tweet_element(tweet_locator=tweet_locator + " span.metadata")
-        )
-        # Check for translation
-        # to be implemented
+        # # move mouse cursor away to highlight any @users
+        # self.driver.scroll_to_element(
+        #     self.get_tweet_element(tweet_locator=tweet_locator + " span.metadata")
+        # )
+        # TODO: Check for translation (to be implemented)
         # Check for "This media may contain sensitive material."
         self.dismiss_sensitive_material_warning()
         LOGGER.info(msg=f"Saving screenshot: {screen_capture_file_path}")
-        if not self.get_tweet_element(tweet_locator=tweet_locator).screenshot(
-            filename=screen_capture_file_path
-        ):
+        tweet_elements = self.driver.get_elements_by_css(self.TWITTER_SECTION)
+
+        tweet_text_match = {}
+        for index, tweet_element in enumerate(tweet_elements):
+            tweet_text = tweet_element.text
+            LOGGER.info(f"Index: {index} - {tweet_text}")
+            match_count = len(
+                [w for w in self.driver.title.split(" ") if w not in tweet_text]
+            )
+            tweet_text_match[index] = match_count
+
+        match_index = min(tweet_text_match, key=tweet_text_match.get)
+        tweet_element = tweet_elements[match_index]
+
+        if not tweet_element.screenshot(filename=screen_capture_file_path):
             LOGGER.error(f"Failed to save {screen_capture_file_path}")
             raise Exception(f"Failed to save {screen_capture_file_path}")
         else:
