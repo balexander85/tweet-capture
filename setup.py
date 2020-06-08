@@ -16,7 +16,7 @@ setup(
         "furl",
         "retry",
         "pytest",
-        "wrapped_driver @ git+https://github.com/balexander85/WrappedDriver",
+        "WrappedDriver @ git+https://github.com/balexander85/WrappedDriver",
     ],
     include_package_data=False,
     license="MIT License",
