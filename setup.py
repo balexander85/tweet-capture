@@ -16,12 +16,12 @@ setup(
         "furl",
         "retry",
         "pytest",
-        "WrappedDriver @ "
-        "git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver",
+        # "WrappedDriver @ "
+        # "git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver",
     ],
-    # dependency_links=[
-    #     "git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver0.1"
-    # ],
+    dependency_links=[
+        "https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver"
+    ],
     include_package_data=False,
     license="MIT License",
     description="A simple wrapper for selenium webdriver.",
