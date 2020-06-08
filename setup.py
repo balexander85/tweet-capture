@@ -17,7 +17,7 @@ setup(
         "retry",
         "pytest",
         "WrappedDriver @ "
-        "git+https://github.com/balexander85/WrappedDriver.git@0.1#egg=WrappedDriver",
+        "git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver",
     ],
     # dependency_links=[
     #     "git+https://github.com/balexander85/WrappedDriver.git#egg=WrappedDriver0.1"
