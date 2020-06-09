@@ -22,7 +22,6 @@ class TweetCapture:
 
     TWITTER_BODY = "body"
     TWITTER_SECTION = "div[aria-label='Timeline: Conversation'] div div div article"
-    TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
     def __init__(
         self,
@@ -98,17 +97,37 @@ class TweetCapture:
             LOGGER.debug(f"Tombstone warning was not present {e}")
             pass
 
+    def dismiss_hidden_replies_warning(self):
+        """Click View for sensitive material warning"""
+        try:
+            if self.driver.get_element_by_css("g circle"):
+                LOGGER.info(f"Found element related to hidden replies")
+                hidden_reply_dismiss_button = [
+                    e
+                    for e in self.driver.get_elements_by_css("div[role='button']")
+                    if e.text == "OK"
+                ]
+                if hidden_reply_dismiss_button:
+                    hidden_reply_dismiss_button[0].click()
+        except NoSuchElementException as e:
+            LOGGER.debug(f"Hidden reply warning was not present {e}")
+            pass
+
     def screen_capture_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
         self.open(url=url)
-        tweet_id = furl(url).path.segments[-1]
-        screen_capture_file_path = str(
-            self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
-        )
+        # Check for "Some replies were hidden by the Tweet author"
+        self.dismiss_hidden_replies_warning()
+
         tweet_element = self.get_tweet_element()
         # TODO: Check for translation (to be implemented)
         # Check for "This media may contain sensitive material."
         self.dismiss_sensitive_material_warning(element=tweet_element)
+
+        tweet_id = furl(url).path.segments[-1]
+        screen_capture_file_path = str(
+            self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
+        )
         LOGGER.info(msg=f"Saving screenshot: {screen_capture_file_path}")
         if not tweet_element.screenshot(filename=screen_capture_file_path):
             LOGGER.error(f"Failed to save {screen_capture_file_path}")
