@@ -2,6 +2,6 @@
 .python-version
 .idea/
 *.log
-conf/config.ini
+tests/conf/config.ini
 screenshots/
 __pycache__/

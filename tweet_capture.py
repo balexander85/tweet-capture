@@ -6,14 +6,10 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
 
-from config import CHROME_DRIVER_PATH
 from _logger import LOGGER
 
 
 TWITTER_URL = "https://twitter.com"
-TWITTER_USER_AGENT = (
-    "user-agent=Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
-)
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -28,7 +24,12 @@ class TweetCapture:
     TWITTER_SECTION = "div[aria-label='Timeline: Conversation'] div div div article"
     TOMBSTONE_VIEW_LINK = "button.Tombstone-action.js-display-this-media.btn-link"
 
-    def __init__(self, screenshot_dir: Path = None, headless: bool = True):
+    def __init__(
+        self,
+        chrome_driver_path: str = None,
+        screenshot_dir: Path = None,
+        headless: bool = True,
+    ):
         self.screenshot_dir = (
             screenshot_dir.joinpath("screenshots")
             if screenshot_dir
@@ -37,7 +38,7 @@ class TweetCapture:
         # create directory if none exist
         self.screenshot_dir.mkdir(exist_ok=True)
         self.driver = WrappedDriver(
-            chrome_driver_path=CHROME_DRIVER_PATH,
+            chrome_driver_path=chrome_driver_path,
             browser="chrome",
             headless=headless,
             user_agent=USER_AGENT,
