@@ -74,13 +74,17 @@ class TweetCapture:
             self.driver.quit_driver()
             raise TimeoutException
 
-    def dismiss_sensitive_material_warning(self):
+    @staticmethod
+    def dismiss_sensitive_material_warning(element):
         """Click View for sensitive material warning"""
         try:
-            self.driver.get_element_by_css(self.TOMBSTONE_VIEW_LINK).click()
-            self.driver.wait_for_element_not_to_be_visible_by_css(
-                self.TOMBSTONE_VIEW_LINK
-            )
+            sensitive_material_view_button = [
+                e
+                for e in element.find_elements_by_css_selector("div[role='button']")
+                if e.text == "View"
+            ]
+            if sensitive_material_view_button:
+                sensitive_material_view_button[0].click()
         except NoSuchElementException as e:
             LOGGER.debug(f"Tombstone warning was not present {e}")
             pass
@@ -96,9 +100,6 @@ class TweetCapture:
         # self.driver.scroll_to_element(
         #     self.get_tweet_element(tweet_locator=tweet_locator + " span.metadata")
         # )
-        # TODO: Check for translation (to be implemented)
-        # Check for "This media may contain sensitive material."
-        self.dismiss_sensitive_material_warning()
         LOGGER.info(msg=f"Saving screenshot: {screen_capture_file_path}")
         tweet_elements = self.driver.get_elements_by_css(self.TWITTER_SECTION)
 
@@ -114,6 +115,9 @@ class TweetCapture:
         match_index = min(tweet_text_match, key=tweet_text_match.get)
         tweet_element = tweet_elements[match_index]
 
+        # TODO: Check for translation (to be implemented)
+        # Check for "This media may contain sensitive material."
+        self.dismiss_sensitive_material_warning(element=tweet_element)
         if not tweet_element.screenshot(filename=screen_capture_file_path):
             LOGGER.error(f"Failed to save {screen_capture_file_path}")
             raise Exception(f"Failed to save {screen_capture_file_path}")
