@@ -21,7 +21,7 @@ class TweetCapture:
     """Page object representing div of a tweet"""
 
     TWITTER_BODY = "body"
-    TWITTER_SECTION = "div[aria-label='Timeline: Conversation'] div div div article"
+    TWITTER_SECTION = "div[data-testid='primaryColumn'] div[data-testid='tweet']"
 
     def __init__(
         self,
@@ -60,22 +60,13 @@ class TweetCapture:
         self._wait_until_loaded()
 
     @retry(exceptions=TimeoutException, tries=4, delay=2)
-    def get_tweet_element(self) -> WebElement:
+    def get_tweet_element(self, tweet_id) -> WebElement:
         """WebElement of the Tweet Div, this assumes tweet page has loaded"""
         LOGGER.debug(f"Retrieving tweet_element")
         try:
-            tweet_elements = self.driver.get_elements_by_css(self.TWITTER_SECTION)
-            tweet_text_match = {}
-            for index, tweet_element in enumerate(tweet_elements):
-                tweet_text = tweet_element.text
-                LOGGER.debug(f"Index: {index} - {tweet_text}")
-                match_count = len(
-                    [w for w in self.driver.title.split(" ") if w not in tweet_text]
-                )
-                tweet_text_match[index] = match_count
-
-            match_index = min(tweet_text_match, key=tweet_text_match.get)
-            return tweet_elements[match_index]
+            return self.driver.get_element_by_css(
+                f"a[href*='{tweet_id}']"
+            ).find_element_by_xpath("../../../../../../..")
 
         except TimeoutException as e:
             LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
@@ -119,12 +110,12 @@ class TweetCapture:
         # Check for "Some replies were hidden by the Tweet author"
         self.dismiss_hidden_replies_warning()
 
-        tweet_element = self.get_tweet_element()
+        tweet_id = furl(url).path.segments[-1]
+        tweet_element = self.get_tweet_element(tweet_id=tweet_id)
         # TODO: Check for translation (to be implemented)
         # Check for "This media may contain sensitive material."
         self.dismiss_sensitive_material_warning(element=tweet_element)
 
-        tweet_id = furl(url).path.segments[-1]
         screen_capture_file_path = str(
             self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
         )
