@@ -39,9 +39,14 @@ def test_tweet_screen_shot_tweet(url):
 
 
 @pytest.mark.parametrize(
-    "url", ["https://twitter.com/1antiracist/status/1275188259187036161",], ids=[1]
+    "url, result",
+    [
+        ["https://twitter.com/1antiracist/status/1275188259187036161", True],
+        ["https://twitter.com/_b_axe/status/1275187972393050112", None],
+    ],
+    ids=["True", "None"],
 )
-def test_sensitive_material_warning(url):
+def test_sensitive_material_warning(url: str, result):
     """
     Verify functionality tweet_capture module
     """
@@ -52,4 +57,4 @@ def test_sensitive_material_warning(url):
     ) as tweet_capture:
         tweet_capture.open(url)
         tweet_element = tweet_capture.get_tweet_element(tweet_id=tweet_id)
-        assert dismiss_sensitive_material_warning(element=tweet_element)
+        assert dismiss_sensitive_material_warning(element=tweet_element) == result

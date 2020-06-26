@@ -118,17 +118,13 @@ class TweetCapture:
 
 def dismiss_sensitive_material_warning(element) -> bool:
     """Click View for sensitive material warning"""
-    try:
-        sensitive_material_view_button = list(
-            filter(
-                lambda e: e.text == "View",
-                element.find_elements_by_css_selector("div[role='button']"),
-            )
+    sensitive_material_view_button = list(
+        filter(
+            lambda e: e.text == "View",
+            element.find_elements_by_css_selector("div[role='button']"),
         )
-        if sensitive_material_view_button:
-            LOGGER.info(f"Dismissing sensitive material warning: {element}")
-            sensitive_material_view_button[0].click()
-            return True
-    except NoSuchElementException as e:
-        LOGGER.debug(f"Tombstone warning was not present {e}")
-        pass
+    )
+    if sensitive_material_view_button:
+        LOGGER.info(f"Dismissing sensitive material warning: {element}")
+        sensitive_material_view_button[0].click()
+        return True
