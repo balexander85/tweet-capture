@@ -27,7 +27,6 @@ def test_tweet_screen_shot_tweet(url):
     Verify functionality tweet_capture module
     """
     tweet_id = furl(url).path.segments[-1]
-
     with TweetCapture(
         chrome_driver_path=CHROME_DRIVER_PATH, headless=True
     ) as tweet_capture:
@@ -51,10 +50,30 @@ def test_sensitive_material_warning(url: str, result):
     Verify functionality tweet_capture module
     """
     tweet_id = furl(url).path.segments[-1]
-
     with TweetCapture(
         chrome_driver_path=CHROME_DRIVER_PATH, headless=True
     ) as tweet_capture:
         tweet_capture.open(url)
         tweet_element = tweet_capture.get_tweet_element(tweet_id=tweet_id)
         assert dismiss_sensitive_material_warning(element=tweet_element) == result
+
+
+@pytest.mark.parametrize(
+    "url, result",
+    [
+        ["https://twitter.com/EmileeMilborn/status/1275832725715337216", True],
+        ["https://twitter.com/_b_axe/status/1275187972393050112", None],
+    ],
+    ids=["True", "None"],
+)
+def test_hidden_replies_warning(url: str, result):
+    """
+    Verify functionality tweet_capture module
+    """
+    tweet_id = furl(url).path.segments[-1]
+    with TweetCapture(
+        chrome_driver_path=CHROME_DRIVER_PATH, headless=True
+    ) as tweet_capture:
+        tweet_capture.open(url)
+        assert tweet_capture.dismiss_hidden_replies_warning() ==  result
+        assert tweet_capture.get_tweet_element(tweet_id=tweet_id)

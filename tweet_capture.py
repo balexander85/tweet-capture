@@ -2,7 +2,7 @@ from pathlib import Path
 
 from furl import furl
 from retry import retry
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
 
@@ -72,21 +72,21 @@ class TweetCapture:
             self.driver.quit_driver()
             raise TimeoutException
 
-    def dismiss_hidden_replies_warning(self):
+    def dismiss_hidden_replies_warning(self) -> bool:
         """Click View for sensitive material warning"""
-        try:
-            if self.driver.get_element_by_css("g circle"):
-                LOGGER.info(f"Found element related to hidden replies")
-                hidden_reply_dismiss_button = [
-                    e
-                    for e in self.driver.get_elements_by_css("div[role='button']")
-                    if e.text == "OK"
-                ]
-                if hidden_reply_dismiss_button:
-                    hidden_reply_dismiss_button[0].click()
-        except NoSuchElementException as e:
-            LOGGER.debug(f"Hidden reply warning was not present {e}")
-            pass
+        hidden_reply_dismiss_button = list(
+            filter(
+                lambda e: e.text == "OK",
+                self.driver.driver.find_elements_by_css_selector("div[role='button']"),
+            )
+        )
+        if hidden_reply_dismiss_button:
+            LOGGER.info(
+                f"Dismissing hidden replies warning: "
+                f"{hidden_reply_dismiss_button}"
+            )
+            hidden_reply_dismiss_button[0].click()
+            return True
 
     def screen_capture_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
