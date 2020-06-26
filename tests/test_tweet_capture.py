@@ -4,7 +4,7 @@ from os import path
 from furl import furl
 import pytest
 
-from tweet_capture import TweetCapture
+from tweet_capture import TweetCapture, dismiss_sensitive_material_warning
 
 CHROME_DRIVER_PATH = ""
 SCREEN_SHOT_DIR_PATH = "screenshots"
@@ -36,3 +36,20 @@ def test_tweet_screen_shot_tweet(url):
     assert screen_cap_file_path == path.join(
         SCREEN_SHOT_DIR_PATH, f"tweet_capture_{tweet_id}.png"
     )
+
+
+@pytest.mark.parametrize(
+    "url", ["https://twitter.com/1antiracist/status/1275188259187036161",], ids=[1]
+)
+def test_sensitive_material_warning(url):
+    """
+    Verify functionality tweet_capture module
+    """
+    tweet_id = furl(url).path.segments[-1]
+
+    with TweetCapture(
+        chrome_driver_path=CHROME_DRIVER_PATH, headless=True
+    ) as tweet_capture:
+        tweet_capture.open(url)
+        tweet_element = tweet_capture.get_tweet_element(tweet_id=tweet_id)
+        assert dismiss_sensitive_material_warning(element=tweet_element)

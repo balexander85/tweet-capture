@@ -67,26 +67,10 @@ class TweetCapture:
             return self.driver.get_element_by_css(
                 f"a[href*='{tweet_id}']"
             ).find_element_by_xpath("../../../../../../..")
-
         except TimeoutException as e:
             LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
             self.driver.quit_driver()
             raise TimeoutException
-
-    @staticmethod
-    def dismiss_sensitive_material_warning(element):
-        """Click View for sensitive material warning"""
-        try:
-            sensitive_material_view_button = [
-                e
-                for e in element.find_elements_by_css_selector("div[role='button']")
-                if e.text == "View"
-            ]
-            if sensitive_material_view_button:
-                sensitive_material_view_button[0].click()
-        except NoSuchElementException as e:
-            LOGGER.debug(f"Tombstone warning was not present {e}")
-            pass
 
     def dismiss_hidden_replies_warning(self):
         """Click View for sensitive material warning"""
@@ -114,7 +98,7 @@ class TweetCapture:
         tweet_element = self.get_tweet_element(tweet_id=tweet_id)
         # TODO: Check for translation (to be implemented)
         # Check for "This media may contain sensitive material."
-        self.dismiss_sensitive_material_warning(element=tweet_element)
+        dismiss_sensitive_material_warning(element=tweet_element)
 
         screen_capture_file_path = str(
             self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
@@ -130,3 +114,21 @@ class TweetCapture:
     def quit(self):
         """Close driver"""
         self.driver.quit_driver()
+
+
+def dismiss_sensitive_material_warning(element) -> bool:
+    """Click View for sensitive material warning"""
+    try:
+        sensitive_material_view_button = list(
+            filter(
+                lambda e: e.text == "View",
+                element.find_elements_by_css_selector("div[role='button']"),
+            )
+        )
+        if sensitive_material_view_button:
+            LOGGER.info(f"Dismissing sensitive material warning: {element}")
+            sensitive_material_view_button[0].click()
+            return True
+    except NoSuchElementException as e:
+        LOGGER.debug(f"Tombstone warning was not present {e}")
+        pass
