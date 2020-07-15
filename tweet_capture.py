@@ -1,4 +1,6 @@
+import logging
 from pathlib import Path
+from sys import stdout
 
 from furl import furl
 from retry import retry
@@ -6,7 +8,12 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
 
-from _logger import LOGGER
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s: %(message)s",
+    stream=stdout,
+)
+LOGGER = logging.getLogger(__name__)
 
 
 TWITTER_URL = "https://twitter.com"
