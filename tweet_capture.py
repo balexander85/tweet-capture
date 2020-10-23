@@ -81,12 +81,19 @@ class TweetCapture:
 
     def dismiss_hidden_replies_warning(self) -> bool:
         """Click View for sensitive material warning"""
-        hidden_reply_dismiss_button = list(
-            filter(
-                lambda e: e.text == "OK",
-                self.driver.driver.find_elements_by_css_selector("div[role='button']"),
+        try:
+            hidden_reply_dismiss_button = list(
+                filter(
+                    lambda e: e.text == "OK",
+                    self.driver.driver.find_elements_by_css_selector(
+                        "div[role='button']"
+                    ),
+                )
             )
-        )
+        except StaleElementReferenceException as e:
+            LOGGER.error(e)
+            hidden_reply_dismiss_button = None
+
         if hidden_reply_dismiss_button:
             LOGGER.info(
                 f"Dismissing hidden replies warning: " f"{hidden_reply_dismiss_button}"
