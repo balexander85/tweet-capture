@@ -4,7 +4,7 @@ from sys import stdout
 
 from furl import furl
 from retry import retry
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
 
@@ -89,8 +89,7 @@ class TweetCapture:
         )
         if hidden_reply_dismiss_button:
             LOGGER.info(
-                f"Dismissing hidden replies warning: "
-                f"{hidden_reply_dismiss_button}"
+                f"Dismissing hidden replies warning: " f"{hidden_reply_dismiss_button}"
             )
             hidden_reply_dismiss_button[0].click()
             return True
@@ -125,12 +124,17 @@ class TweetCapture:
 
 def dismiss_sensitive_material_warning(element) -> bool:
     """Click View for sensitive material warning"""
-    sensitive_material_view_button = list(
-        filter(
-            lambda e: e.text == "View",
-            element.find_elements_by_css_selector("div[role='button']"),
+    try:
+        sensitive_material_view_button = list(
+            filter(
+                lambda e: e.text == "View",
+                element.find_elements_by_css_selector("div[role='button']"),
+            )
         )
-    )
+    except StaleElementReferenceException as e:
+        LOGGER.error(e)
+        sensitive_material_view_button = None
+
     if sensitive_material_view_button:
         LOGGER.info(f"Dismissing sensitive material warning: {element}")
         sensitive_material_view_button[0].click()
