@@ -6,7 +6,7 @@ import pytest
 
 from tweet_capture import TweetCapture, dismiss_sensitive_material_warning
 
-CHROME_DRIVER_PATH = ""
+CHROME_DRIVER_PATH = "/usr/bin/chromedriver"
 SCREEN_SHOT_DIR_PATH = "screenshots"
 
 
@@ -40,7 +40,8 @@ def test_tweet_screen_shot_tweet(url):
 @pytest.mark.parametrize(
     "url, result",
     [
-        ["https://twitter.com/1antiracist/status/1275188259187036161", True],
+        ["https://twitter.com/1antiracist/status/1275188259187036161", None],
+        ["https://twitter.com/_b_axe/status/1283550807443546115", True],
         ["https://twitter.com/_b_axe/status/1275187972393050112", None],
     ],
     ids=["True", "None"],

@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  tweet_capture:
+    build: .
+    command: python -m pytest -vv tests/test_tweet_capture.py 
+    image: balexander85/tweet_capture:latest
+    volumes:
+      - ./src/tweet_capture.py:/usr/src/tweet_capture.py
+
