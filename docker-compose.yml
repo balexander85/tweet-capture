@@ -6,4 +6,5 @@ services:
     image: balexander85/tweet_capture:latest
     volumes:
       - ./src/tweet_capture.py:/usr/src/tweet_capture.py
+      - ./src/tests:/usr/src/tests
 
