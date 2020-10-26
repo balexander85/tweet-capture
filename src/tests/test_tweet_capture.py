@@ -4,7 +4,7 @@ from os import path
 from furl import furl
 import pytest
 
-from tweet_capture import TweetCapture, dismiss_sensitive_material_warning
+from src.tweet_capture import TweetCapture, dismiss_sensitive_material_warning
 
 CHROME_DRIVER_PATH = "/usr/bin/chromedriver"
 SCREEN_SHOT_DIR_PATH = "screenshots"
@@ -44,7 +44,7 @@ def test_tweet_screen_shot_tweet(url):
         ["https://twitter.com/_b_axe/status/1283550807443546115", True],
         ["https://twitter.com/_b_axe/status/1275187972393050112", None],
     ],
-    ids=["True", "None"],
+    ids=["None", "True", "None"],
 )
 def test_sensitive_material_warning(url: str, result):
     """
