@@ -61,10 +61,10 @@ def test_sensitive_material_warning(url: str, result):
 @pytest.mark.parametrize(
     "url, result",
     [
-        ["https://twitter.com/_b_axe/status/1306236430134521859", True],
+        #["https://twitter.com/_b_axe/status/1306236430134521859", True],
         ["https://twitter.com/_b_axe/status/1275187972393050112", None],
     ],
-    ids=["True", "None"],
+    ids=["None"],
 )
 def test_hidden_replies_warning(url: str, result):
     """
