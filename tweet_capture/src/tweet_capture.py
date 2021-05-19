@@ -5,6 +5,7 @@ from sys import stdout
 from furl import furl
 from retry import retry
 from selenium.common.exceptions import (
+    ElementClickInterceptedException,
     NoSuchElementException,
     StaleElementReferenceException,
     TimeoutException,
@@ -191,5 +192,8 @@ def dismiss_sensitive_material_warning(element) -> bool:
 
     if sensitive_material_view_button:
         LOGGER.info(f"Dismissing sensitive material warning: {element}")
-        sensitive_material_view_button[0].click()
-        return True
+        try:
+            sensitive_material_view_button[0].click()
+            return True
+        except ElementClickInterceptedException as e:
+            LOGGER.debug(f"Could not dismiss sensitive material view button: {e}")
