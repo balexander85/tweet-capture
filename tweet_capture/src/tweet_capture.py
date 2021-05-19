@@ -4,7 +4,11 @@ from sys import stdout
 
 from furl import furl
 from retry import retry
-from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    TimeoutException,
+)
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
 
@@ -18,9 +22,9 @@ LOGGER = logging.getLogger(__name__)
 
 TWITTER_URL = "https://twitter.com"
 USER_AGENT = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) "
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/49.0.2656.18 Safari/537.36"
+    "Chrome/90.0.4430.93 Safari/537.36"
 )
 
 
@@ -29,6 +33,12 @@ class TweetCapture:
 
     TWITTER_BODY = "body"
     TWITTER_SECTION = "div[data-testid='primaryColumn'] div[data-testid='tweet']"
+    TWEET_SECTION = (
+        "div#react-root > div > div > div:nth-of-type(2) "
+        "> main > div > div > div > div:nth-of-type(1) "
+        "> div > div:nth-of-type(2) > div > section > div "
+        # "> div > div:nth-of-type(1)"
+    )
 
     def __init__(
         self,
@@ -44,8 +54,9 @@ class TweetCapture:
         # create directory if none exist
         self.screenshot_dir.mkdir(exist_ok=True)
         self.driver = WrappedDriver(
-            chrome_driver_path=chrome_driver_path,
+            executable_path=chrome_driver_path,
             browser="chrome",
+            mobile=True,
             headless=headless,
             user_agent=USER_AGENT,
         )
@@ -71,26 +82,59 @@ class TweetCapture:
         """WebElement of the Tweet Div, this assumes tweet page has loaded"""
         LOGGER.debug(f"Retrieving tweet_element")
         try:
-            return self.driver.get_element_by_css(
-                f"a[href*='{tweet_id}']"
-            ).find_element_by_xpath("../../../../../../..")
+            return self.driver.get_element_by_css(self.TWEET_SECTION)
         except TimeoutException as e:
             LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
             self.driver.quit_driver()
             raise TimeoutException
 
+    def delete_sign_in_sign_up_banner(self):
+        """Delete the banner for sign up or sign in"""
+        LOGGER.debug("Deleting banner")
+        banner_text = "Don’t miss what’s happening"
+        try:
+            banner = self.driver.get_element_by_text(banner_text).find_element_by_xpath(
+                "../../../../../../.."
+            )
+            self.driver.delete_element(element=banner)
+        except NoSuchElementException as e:
+            LOGGER.debug(f"Attempted to delete banner {banner_text}, {e}")
+
+    def delete_thread_banner(self):
+        """Delete the banner for sign up or sign in"""
+        LOGGER.debug("Deleting app promo banner")
+        thread_locator = (
+            "div#react-root > div > div > div:nth-of-type(2) "
+            "> main > div > div > div > div:nth-of-type(1) > "
+            "div > div:nth-of-type(1)"
+        )
+        try:
+            banner = self.driver.get_element_by_css(locator=thread_locator)
+            self.driver.delete_element(element=banner)
+        except NoSuchElementException as e:
+            LOGGER.debug(f"Attempted to delete banner {thread_locator}, {e}")
+
+    def delete_app_promo_banner(self):
+        """Delete the banner for sign up or sign in"""
+        LOGGER.debug("Deleting app promo banner")
+        banner_text = "Twitter is better on the app"
+        try:
+            banner = self.driver.get_element_by_text(banner_text).find_element_by_xpath(
+                "../../../../../../.."
+            )
+            self.driver.delete_element(element=banner)
+        except NoSuchElementException as e:
+            LOGGER.debug(f"Attempted to delete banner {banner_text}, {e}")
+
     def dismiss_hidden_replies_warning(self) -> bool:
         """Click View for sensitive material warning"""
         try:
-            hidden_reply_dismiss_button = list(
-                filter(
-                    lambda e: e.text == "OK",
-                    self.driver.driver.find_elements_by_css_selector(
-                        "div[role='button']"
-                    ),
+            hidden_reply_dismiss_button = (
+                self.driver.driver.find_element_by_css_selector(
+                    "[aria-label='Hidden replies']"
                 )
             )
-        except StaleElementReferenceException as e:
+        except NoSuchElementException as e:
             LOGGER.error(e)
             hidden_reply_dismiss_button = None
 
@@ -98,7 +142,7 @@ class TweetCapture:
             LOGGER.info(
                 f"Dismissing hidden replies warning: " f"{hidden_reply_dismiss_button}"
             )
-            hidden_reply_dismiss_button[0].click()
+            hidden_reply_dismiss_button.click()
             return True
 
     def screen_capture_tweet(self, url) -> str:
@@ -112,6 +156,9 @@ class TweetCapture:
         # TODO: Check for translation (to be implemented)
         # Check for "This media may contain sensitive material."
         dismiss_sensitive_material_warning(element=tweet_element)
+        self.delete_sign_in_sign_up_banner()
+        self.delete_app_promo_banner()
+        self.delete_thread_banner()
 
         screen_capture_file_path = str(
             self.screenshot_dir.joinpath(f"tweet_capture_{tweet_id}.png")
