@@ -60,6 +60,7 @@ class TweetCapture:
             mobile=True,
             headless=headless,
             user_agent=USER_AGENT,
+            # window_size=(640, 1080),
         )
 
     def __enter__(self):
@@ -143,7 +144,10 @@ class TweetCapture:
             LOGGER.info(
                 f"Dismissing hidden replies warning: " f"{hidden_reply_dismiss_button}"
             )
-            hidden_reply_dismiss_button.click()
+            try:
+                hidden_reply_dismiss_button.click()
+            except ElementClickInterceptedException as e:
+                LOGGER.error(f"Could not click hidden replies warning. {e}")
             return True
 
     def screen_capture_tweet(self, url) -> str:
