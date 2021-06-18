@@ -4,7 +4,10 @@ from os import path
 from furl import furl
 import pytest
 
-from tweet_capture import TweetCapture, dismiss_sensitive_material_warning
+from tweet_capture.src.tweet_capture import (
+    TweetCapture,
+    dismiss_sensitive_material_warning,
+)
 
 CHROME_DRIVER_PATH = "/usr/bin/chromedriver"
 SCREEN_SHOT_DIR_PATH = "screenshots"
@@ -13,9 +16,9 @@ SCREEN_SHOT_DIR_PATH = "screenshots"
 @pytest.mark.parametrize(
     "url",
     [
+        "https://twitter.com/RMaryFL1/status/1405588010515767299",
         "https://twitter.com/RealKaylaJames/status/1237720669024108545",
         "https://twitter.com/BeQueerDoCrime/status/1268036084765798402",
-        "https://twitter.com/Cawlitative/status/1268886549531426823",
         "https://twitter.com/Austin_Police/status/1267226527848181763",
         "https://twitter.com/reidepstein/status/1268738899616182272",
         "https://twitter.com/pastormarkburns/status/1268887999934353410",
@@ -61,7 +64,7 @@ def test_sensitive_material_warning(url: str, result):
 @pytest.mark.parametrize(
     "url, result",
     [
-        #["https://twitter.com/_b_axe/status/1306236430134521859", True],
+        # ["https://twitter.com/_b_axe/status/1306236430134521859", True],
         ["https://twitter.com/_b_axe/status/1275187972393050112", None],
     ],
     ids=["None"],
@@ -75,5 +78,5 @@ def test_hidden_replies_warning(url: str, result):
         chrome_driver_path=CHROME_DRIVER_PATH, headless=True
     ) as tweet_capture:
         tweet_capture.open(url)
-        assert tweet_capture.dismiss_hidden_replies_warning() ==  result
+        assert tweet_capture.dismiss_hidden_replies_warning() == result
         assert tweet_capture.get_tweet_element(tweet_id=tweet_id)

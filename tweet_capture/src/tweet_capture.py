@@ -85,8 +85,14 @@ class TweetCapture:
         LOGGER.debug(f"Retrieving tweet_element")
         try:
             return self.driver.get_element_by_css(self.TWEET_SECTION)
-        except TimeoutException as e:
+        except (NoSuchElementException, TimeoutException) as e:
             LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
+            screen_capture_failure_file_path = str(
+                self.screenshot_dir.joinpath(f"screen_capture_failure_{tweet_id}.png")
+            )
+            self.driver.screenshot_element(
+                locator="body", file_name=screen_capture_failure_file_path
+            )
             self.driver.quit_driver()
             raise TimeoutException
 
@@ -141,20 +147,22 @@ class TweetCapture:
             hidden_reply_dismiss_button = None
 
         if hidden_reply_dismiss_button:
-            LOGGER.info(
-                f"Dismissing hidden replies warning: " f"{hidden_reply_dismiss_button}"
-            )
-            try:
-                hidden_reply_dismiss_button.click()
-            except ElementClickInterceptedException as e:
-                LOGGER.error(f"Could not click hidden replies warning. {e}")
-            return True
+            if self.driver.element_visible(element=hidden_reply_dismiss_button):
+                LOGGER.info(
+                    f"Dismissing hidden replies warning: {hidden_reply_dismiss_button}"
+                )
+                try:
+                    hidden_reply_dismiss_button.click()
+                except ElementClickInterceptedException as e:
+                    LOGGER.error(f"Could not click hidden replies warning. {e}")
+                return True
 
     def screen_capture_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
         self.open(url=url)
+        self.delete_app_promo_banner()
         # Check for "Some replies were hidden by the Tweet author"
-        self.dismiss_hidden_replies_warning()
+        # self.dismiss_hidden_replies_warning()
 
         tweet_id = furl(url).path.segments[-1]
         tweet_element = self.get_tweet_element(tweet_id=tweet_id)
@@ -162,7 +170,6 @@ class TweetCapture:
         # Check for "This media may contain sensitive material."
         dismiss_sensitive_material_warning(element=tweet_element)
         self.delete_sign_in_sign_up_banner()
-        self.delete_app_promo_banner()
         self.delete_thread_banner()
 
         screen_capture_file_path = str(
