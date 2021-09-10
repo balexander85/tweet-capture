@@ -33,7 +33,9 @@ class TweetCapture:
     """Page object representing div of a tweet"""
 
     TWITTER_BODY = "body"
-    TWITTER_SECTION = "div[data-testid='primaryColumn'] div[data-testid='tweet']"
+    TWITTER_SECTION = (
+        "div[data-testid='primaryColumn'] section[aria-labelledby='accessible-list-0']"
+    )
     TWEET_SECTION = (
         "div#react-root > div > div > div:nth-of-type(2) "
         "> main > div > div > div > div:nth-of-type(1) "
