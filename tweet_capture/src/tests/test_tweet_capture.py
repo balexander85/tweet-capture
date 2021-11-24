@@ -4,7 +4,7 @@ from os import path
 from furl import furl
 import pytest
 
-from tweet_capture.src.tweet_capture import (
+from src.tweet_capture import (
     TweetCapture,
     dismiss_sensitive_material_warning,
 )

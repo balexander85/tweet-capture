@@ -6,7 +6,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
  # Install tools for building
  && toolDeps="git aptitude" \
- && apt-get install -y --no-install-recommends --no-install-suggests $toolDeps \
+ && apt-get install -y --no-install-recommends --no-install-suggests $toolDeps fonts-takao-mincho \
  # Install chromedriver and chromium with aptitude
  && aptitude install chromium-driver -y \
  # Activate Virtual Environment
