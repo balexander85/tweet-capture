@@ -33,9 +33,13 @@ class TweetCapture:
     """Page object representing div of a tweet"""
 
     TWITTER_BODY = "body"
+    # a[href*='1268036084765798402']
     TWITTER_SECTION = (
-        "div[data-testid='primaryColumn'] section[aria-labelledby='accessible-list-0']"
+        "div[data-testid='primaryColumn'] "
+        "section[aria-labelledby='accessible-list-0'] "
+        # "article[data-testid='tweet']"
     )
+    TWEET_A = "div > div > div > div > a[href*='{}']"
     TWEET_SECTION = (
         "div#react-root > div > div > div:nth-of-type(2) "
         "> main > div > div > div > div:nth-of-type(1) "
@@ -86,7 +90,8 @@ class TweetCapture:
         """WebElement of the Tweet Div, this assumes tweet page has loaded"""
         LOGGER.debug(f"Retrieving tweet_element")
         try:
-            return self.driver.get_element_by_css(self.TWEET_SECTION)
+            # return self.driver.get_element_by_css(self.TWEET_A.format(tweet_id))
+            return self.driver.get_element_by_css(self.TWITTER_SECTION)
         except (NoSuchElementException, TimeoutException) as e:
             LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
             screen_capture_failure_file_path = str(
