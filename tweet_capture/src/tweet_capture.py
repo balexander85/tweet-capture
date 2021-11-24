@@ -10,6 +10,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     TimeoutException,
 )
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from wrapped_driver import WrappedDriver
 
@@ -19,7 +20,6 @@ logging.basicConfig(
     stream=stdout,
 )
 LOGGER = logging.getLogger(__name__)
-
 
 TWITTER_URL = "https://twitter.com"
 USER_AGENT = (
@@ -44,10 +44,10 @@ class TweetCapture:
     )
 
     def __init__(
-        self,
-        chrome_driver_path: str = None,
-        screenshot_dir: Path = None,
-        headless: bool = True,
+            self,
+            chrome_driver_path: str = None,
+            screenshot_dir: Path = None,
+            headless: bool = True,
     ):
         self.screenshot_dir = (
             screenshot_dir.joinpath("screenshots")
@@ -103,8 +103,9 @@ class TweetCapture:
         LOGGER.debug("Deleting banner")
         banner_text = "Don’t miss what’s happening"
         try:
-            banner = self.driver.get_element_by_text(banner_text).find_element_by_xpath(
-                "../../../../../../.."
+            banner = self.driver.get_element_by_text(banner_text).find_element(
+                by=By.XPATH,
+                value="../../../../../../.."
             )
             self.driver.delete_element(element=banner)
         except NoSuchElementException as e:
@@ -129,9 +130,10 @@ class TweetCapture:
         LOGGER.debug("Deleting app promo banner")
         banner_text = "Twitter is better on the app"
         try:
-            banner = self.driver.get_element_by_text(banner_text).find_element_by_xpath(
-                "../../../../../../.."
-            )
+            banner = self.driver.get_element_by_text(banner_text).find_element(
+                by=By.XPATH,
+                value="../../../../../../.."
+                )
             self.driver.delete_element(element=banner)
         except NoSuchElementException as e:
             LOGGER.debug(f"Attempted to delete banner {banner_text}, {e}")
