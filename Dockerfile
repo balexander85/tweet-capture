@@ -1,8 +1,7 @@
-FROM python:3.7-slim-buster
+FROM balexander85/wrapped_driver:slim-buster
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
 WORKDIR /usr/src
-COPY src \
-  requirements.txt ./
+COPY tweet_capture ./
 RUN apt-get update \
  && apt-get upgrade -y \
  # Install tools for building
@@ -10,6 +9,8 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends --no-install-suggests $toolDeps \
  # Install chromedriver and chromium with aptitude
  && aptitude install chromium-driver -y \
+ # Activate Virtual Environment
+ && . /wrapped-driver-env/bin/activate \
  && python -m pip install -r requirements.txt \
  # Cleanup unnecessary stuff
  && apt-get purge -y --auto-remove \
@@ -17,5 +18,3 @@ RUN apt-get update \
             $toolDeps \
  && rm -rf /var/lib/apt/lists/* \
            /tmp/*
-CMD ["python", "-m", "pytest", "-vv", "tests/test_tweet_capture.py"]
-

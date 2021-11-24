@@ -1,5 +1,4 @@
--e git+https://github.com/balexander85/wrapped_driver.git#egg=wrapped_driver
 furl==2.1.0
-pytest==6.1.1
+pytest
 retry==0.9.2
 

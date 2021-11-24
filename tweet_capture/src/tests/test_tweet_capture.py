@@ -16,6 +16,7 @@ SCREEN_SHOT_DIR_PATH = "screenshots"
 @pytest.mark.parametrize(
     "url",
     [
+        "https://twitter.com/shucaileibaozha/status/1455103704177123330",
         "https://twitter.com/RMaryFL1/status/1405588010515767299",
         "https://twitter.com/RealKaylaJames/status/1237720669024108545",
         "https://twitter.com/BeQueerDoCrime/status/1268036084765798402",
