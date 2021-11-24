@@ -139,10 +139,8 @@ class TweetCapture:
     def dismiss_hidden_replies_warning(self) -> bool:
         """Click View for sensitive material warning"""
         try:
-            hidden_reply_dismiss_button = (
-                self.driver.driver.find_element_by_css_selector(
-                    "[aria-label='Hidden replies']"
-                )
+            hidden_reply_dismiss_button = self.driver.get_element_by_css(
+                "[aria-label='Hidden replies']"
             )
         except NoSuchElementException as e:
             LOGGER.error(e)
