@@ -196,7 +196,7 @@ def dismiss_sensitive_material_warning(element) -> bool:
         sensitive_material_view_button = list(
             filter(
                 lambda e: e.text == "View",
-                element.find_elements_by_css_selector("div[role='button']"),
+                element.find_elements(by=By.CSS_SELECTOR, value="div[role='button']"),
             )
         )
     except StaleElementReferenceException as e:
