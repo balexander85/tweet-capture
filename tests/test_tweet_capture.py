@@ -1,5 +1,6 @@
 """test_tweet_capture.py"""
 from os import path
+from platform import platform
 
 from furl import furl
 import pytest
@@ -9,7 +10,11 @@ from tweet_capture import (
     dismiss_sensitive_material_warning,
 )
 
-CHROME_DRIVER_PATH = "/usr/bin/chromedriver"
+if "macOS" in platform():
+    CHROME_DRIVER_PATH = "/opt/homebrew/bin/chromedriver"
+else:
+    CHROME_DRIVER_PATH = "/usr/bin/chromedriver"
+
 SCREEN_SHOT_DIR_PATH = "screenshots"
 
 
