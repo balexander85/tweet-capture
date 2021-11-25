@@ -2,7 +2,4 @@ version: '3.7'
 services:
   tweet_capture:
     build: .
-    command: /wrapped-driver-env/bin/python -m pytest -vv src/tests/test_tweet_capture.py
     image: balexander85/tweet_capture:new
-    volumes:
-      - ./screenshots:/usr/src/screenshots
