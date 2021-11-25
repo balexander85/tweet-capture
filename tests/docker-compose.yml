@@ -3,6 +3,6 @@ services:
   tweet_capture:
     build: .
     command: /wrapped-driver-env/bin/python -m pytest -vv test_tweet_capture.py
-    image: balexander85/tweet_capture
+    image: balexander85/tweet_capture_test
     volumes:
       - ./screenshots:/usr/src/screenshots
