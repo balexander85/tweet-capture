@@ -14,6 +14,6 @@ RUN apt-get update \
  # Cleanup unnecessary stuff
  && apt-get purge -y --auto-remove \
                   -o APT::AutoRemove::RecommendsImportant=false \
-            $toolDeps \
+            $build_dependencies \
  && rm -rf /var/lib/apt/lists/* \
            /tmp/*
