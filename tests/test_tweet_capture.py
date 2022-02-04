@@ -5,9 +5,9 @@ from platform import platform
 from furl import furl
 import pytest
 
-from tweet_capture import (
+from tweetcapture import (
     TweetCapture,
-    dismiss_sensitive_material_warning,
+    # dismiss_sensitive_material_warning,
 )
 
 if "macOS" in platform():

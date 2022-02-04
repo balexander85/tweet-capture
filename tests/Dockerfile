@@ -1,4 +1,4 @@
-FROM balexander85/tweet_capture:latest
+FROM balexander85/tweetcapture
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
 WORKDIR /usr/src
 COPY config.py \

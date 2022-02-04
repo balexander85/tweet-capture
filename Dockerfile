@@ -3,7 +3,7 @@ ARG build_dependencies="git aptitude"
 ARG app_dependencies="fonts-takao-mincho fonts-deva-extra"
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
 WORKDIR /app
-COPY tweet_capture setup.py README.md MANIFEST.in ./
+COPY tweetcapture.py requirements.txt setup.py README.md MANIFEST.in ./
 RUN apt-get update \
  && apt-get upgrade -y \
  # Install tools for building
