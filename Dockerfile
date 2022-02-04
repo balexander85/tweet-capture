@@ -1,8 +1,8 @@
-FROM balexander85/wrapped_driver:slim-buster
+FROM balexander85/wrappeddriver
 ARG build_dependencies="git aptitude"
-ARG app_dependencies="fonts-takao-mincho"
+ARG app_dependencies="fonts-takao-mincho fonts-deva-extra"
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
-WORKDIR /usr/src
+WORKDIR /app
 COPY tweet_capture setup.py README.md MANIFEST.in ./
 RUN apt-get update \
  && apt-get upgrade -y \

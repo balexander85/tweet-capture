@@ -12,7 +12,7 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from wrapped_driver import WrappedDriver
+from wrappeddriver import WrappedDriver
 
 logging.basicConfig(
     level=logging.DEBUG,

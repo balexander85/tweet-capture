@@ -6,3 +6,4 @@ services:
     image: balexander85/tweet_capture_test
     volumes:
       - ./screenshots:/usr/src/screenshots
+      - ${PWD}/tests/test_tweet_capture.py:/usr/src/test_tweet_capture.py
