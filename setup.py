@@ -1,9 +1,15 @@
+"""setup.py
+
+Used for packaging tweetcapture
+"""
 import os
 from setuptools import find_packages, setup
 
 VERSION = "0.1.4"
 DESCRIPTION = "A tool to screenshot tweets with selenium webdriver."
-with open(os.path.join(os.path.dirname(__file__), "README.md")) as readme:
+with open(
+    os.path.join(os.path.dirname(__file__), "README.md"), encoding="UTF-8"
+) as readme:
     README = readme.read()
 
 # allow setup.py to be run from any path

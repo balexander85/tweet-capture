@@ -1,3 +1,7 @@
+"""config.py
+
+Module containing the paths for chromedriver and conf directory
+"""
 from configparser import ConfigParser
 from pathlib import Path
 

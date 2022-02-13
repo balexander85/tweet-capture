@@ -1,3 +1,7 @@
+"""tweetcapture.py
+
+Module used for screenshotting tweets via webdriver
+"""
 import logging
 from pathlib import Path
 from sys import stdout
@@ -12,7 +16,10 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+
 from wrappeddriver import WrappedDriver
+from waits import wait_for_element_to_be_visible_by_css
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -76,24 +83,25 @@ class TweetCapture:
         self.quit()
 
     def _wait_until_loaded(self) -> bool:
-        return self.driver.wait_for_element_to_be_visible_by_css(
-            locator=self.TWITTER_SECTION
+        return wait_for_element_to_be_visible_by_css(
+            driver=self.driver, locator=self.TWITTER_SECTION
         )
 
     def open(self, url: str):
-        LOGGER.info(f"Opening...tweet: {url}")
+        """Open tweet page"""
+        LOGGER.info(msg=f"Opening...tweet: {url}")
         self.driver.open(url=url)
         self._wait_until_loaded()
 
     @retry(exceptions=TimeoutException, tries=4, delay=2)
     def get_tweet_element(self, tweet_id) -> WebElement:
         """WebElement of the Tweet Div, this assumes tweet page has loaded"""
-        LOGGER.debug("Retrieving tweet_element")
+        LOGGER.debug(msg="Retrieving tweet_element")
         try:
             # return self.driver.get_element_by_css(self.TWEET_A.format(tweet_id))
             return self.driver.get_element_by_css(self.TWITTER_SECTION)
-        except (NoSuchElementException, TimeoutException) as e:
-            LOGGER.error(f"{e} timed out looking for: {self.TWITTER_SECTION}")
+        except (NoSuchElementException, TimeoutException) as error:
+            LOGGER.error(msg=f"{error} timed out looking for: {self.TWITTER_SECTION}")
             screen_capture_failure_file_path = str(
                 self.screenshot_dir.joinpath(f"screen_capture_failure_{tweet_id}.png")
             )
@@ -101,7 +109,7 @@ class TweetCapture:
                 locator="body", file_name=screen_capture_failure_file_path
             )
             self.driver.quit_driver()
-            raise TimeoutException
+            raise TimeoutException from error
 
     def delete_sign_in_sign_up_banner(self):
         """Delete the banner for sign up or sign in"""
@@ -112,8 +120,8 @@ class TweetCapture:
                 by=By.XPATH, value="../../../../../../.."
             )
             self.driver.delete_element(element=banner)
-        except NoSuchElementException as e:
-            LOGGER.debug(f"Attempted to delete banner {banner_text}, {e}")
+        except NoSuchElementException as error:
+            LOGGER.debug(msg=f"Attempted to delete banner {banner_text}, {error}")
 
     def delete_thread_banner(self):
         """Delete the banner for sign up or sign in"""
@@ -126,8 +134,8 @@ class TweetCapture:
         try:
             banner = self.driver.get_element_by_css(locator=thread_locator)
             self.driver.delete_element(element=banner)
-        except NoSuchElementException as e:
-            LOGGER.debug(f"Attempted to delete banner {thread_locator}, {e}")
+        except NoSuchElementException as error:
+            LOGGER.debug(msg=f"Attempted to delete banner {thread_locator}, {error}")
 
     def delete_app_promo_banner(self):
         """Delete the banner for sign up or sign in"""
@@ -138,8 +146,8 @@ class TweetCapture:
                 by=By.XPATH, value="../../../../../../.."
             )
             self.driver.delete_element(element=banner)
-        except NoSuchElementException as e:
-            LOGGER.debug(f"Attempted to delete banner {banner_text}, {e}")
+        except NoSuchElementException as error:
+            LOGGER.debug(msg=f"Attempted to delete banner {banner_text}, {error}")
 
     def dismiss_hidden_replies_warning(self) -> bool:
         """Click View for sensitive material warning"""
@@ -147,20 +155,20 @@ class TweetCapture:
             hidden_reply_dismiss_button = self.driver.get_element_by_css(
                 "[aria-label='Hidden replies']"
             )
-        except NoSuchElementException as e:
-            LOGGER.error(e)
-            hidden_reply_dismiss_button = None
+        except NoSuchElementException as error:
+            LOGGER.error(error)
+            return False
 
-        if hidden_reply_dismiss_button:
-            if self.driver.element_visible(element=hidden_reply_dismiss_button):
-                LOGGER.info(
-                    f"Dismissing hidden replies warning: {hidden_reply_dismiss_button}"
-                )
-                try:
-                    hidden_reply_dismiss_button.click()
-                except ElementClickInterceptedException as e:
-                    LOGGER.error(f"Could not click hidden replies warning. {e}")
+        if self.driver.element_visible(element=hidden_reply_dismiss_button):
+            LOGGER.info(
+                msg=f"Dismiss hidden replies warning: {hidden_reply_dismiss_button}"
+            )
+            try:
+                hidden_reply_dismiss_button.click()
                 return True
+            except ElementClickInterceptedException as error:
+                LOGGER.error(msg=f"Could not click hidden replies warning. {error}")
+        return False
 
     def screen_capture_tweet(self, url) -> str:
         """Take a screenshot of tweet and save to file"""
@@ -182,11 +190,11 @@ class TweetCapture:
         )
         LOGGER.info(msg=f"Saving screenshot: {screen_capture_file_path}")
         if not tweet_element.screenshot(filename=screen_capture_file_path):
-            LOGGER.error(f"Failed to save {screen_capture_file_path}")
+            LOGGER.error(msg=f"Failed to save {screen_capture_file_path}")
             raise Exception(f"Failed to save {screen_capture_file_path}")
-        else:
-            LOGGER.debug(msg=f"Saved screenshot: {screen_capture_file_path}")
-            return screen_capture_file_path
+
+        LOGGER.debug(msg=f"Saved screenshot: {screen_capture_file_path}")
+        return screen_capture_file_path
 
     def quit(self):
         """Close driver"""
@@ -202,14 +210,16 @@ def dismiss_sensitive_material_warning(element) -> bool:
                 element.find_elements(by=By.CSS_SELECTOR, value="div[role='button']"),
             )
         )
-    except StaleElementReferenceException as e:
-        LOGGER.error(e)
-        sensitive_material_view_button = None
+    except StaleElementReferenceException as error:
+        LOGGER.error(error)
+        return False
 
-    if sensitive_material_view_button:
-        LOGGER.info(f"Dismissing sensitive material warning: {element}")
-        try:
-            sensitive_material_view_button[0].click()
-            return True
-        except ElementClickInterceptedException as e:
-            LOGGER.debug(f"Could not dismiss sensitive material view button: {e}")
+    LOGGER.info(msg=f"Dismissing sensitive material warning: {element}")
+    try:
+        sensitive_material_view_button[0].click()
+        return True
+    except ElementClickInterceptedException as error:
+        LOGGER.debug(
+            msg=f"Could not dismiss sensitive material view button: {error}"
+        )
+        return False

@@ -37,7 +37,7 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         # stop the build if there are Python linting and/or syntax errors
-        pylint $(git ls-files '*.py')
+        pylint --disable=fixme,not-callable $(git ls-files '*.py')
     - name: Test with pytest
       run: |
         python -m pytest -vv tests/
