@@ -17,8 +17,8 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from wrappeddriver import WrappedDriver
 from waits import wait_for_element_to_be_visible_by_css
+from wrappeddriver import WrappedDriver
 
 
 logging.basicConfig(
@@ -84,7 +84,7 @@ class TweetCapture:
 
     def _wait_until_loaded(self) -> bool:
         return wait_for_element_to_be_visible_by_css(
-            driver=self.driver, locator=self.TWITTER_SECTION
+            driver=self.driver.driver, locator=self.TWITTER_SECTION
         )
 
     def open(self, url: str):
@@ -215,11 +215,12 @@ def dismiss_sensitive_material_warning(element) -> bool:
         return False
 
     LOGGER.info(msg=f"Dismissing sensitive material warning: {element}")
-    try:
-        sensitive_material_view_button[0].click()
-        return True
-    except ElementClickInterceptedException as error:
-        LOGGER.debug(
-            msg=f"Could not dismiss sensitive material view button: {error}"
-        )
-        return False
+    if sensitive_material_view_button:
+        try:
+            sensitive_material_view_button[0].click()
+            return True
+        except ElementClickInterceptedException as error:
+            LOGGER.debug(
+                msg=f"Could not dismiss sensitive material view button: {error}"
+            )
+    return False
