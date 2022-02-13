@@ -48,10 +48,10 @@ class TweetCapture:
     )
 
     def __init__(
-            self,
-            chrome_driver_path: str = None,
-            screenshot_dir: Path = None,
-            headless: bool = True,
+        self,
+        chrome_driver_path: str = None,
+        screenshot_dir: Path = None,
+        headless: bool = True,
     ):
         self.screenshot_dir = (
             screenshot_dir.joinpath("screenshots")
@@ -88,7 +88,7 @@ class TweetCapture:
     @retry(exceptions=TimeoutException, tries=4, delay=2)
     def get_tweet_element(self, tweet_id) -> WebElement:
         """WebElement of the Tweet Div, this assumes tweet page has loaded"""
-        LOGGER.debug(f"Retrieving tweet_element")
+        LOGGER.debug("Retrieving tweet_element")
         try:
             # return self.driver.get_element_by_css(self.TWEET_A.format(tweet_id))
             return self.driver.get_element_by_css(self.TWITTER_SECTION)
@@ -109,8 +109,7 @@ class TweetCapture:
         banner_text = "Don’t miss what’s happening"
         try:
             banner = self.driver.get_element_by_text(banner_text).find_element(
-                by=By.XPATH,
-                value="../../../../../../.."
+                by=By.XPATH, value="../../../../../../.."
             )
             self.driver.delete_element(element=banner)
         except NoSuchElementException as e:
@@ -136,9 +135,8 @@ class TweetCapture:
         banner_text = "Twitter is better on the app"
         try:
             banner = self.driver.get_element_by_text(banner_text).find_element(
-                by=By.XPATH,
-                value="../../../../../../.."
-                )
+                by=By.XPATH, value="../../../../../../.."
+            )
             self.driver.delete_element(element=banner)
         except NoSuchElementException as e:
             LOGGER.debug(f"Attempted to delete banner {banner_text}, {e}")
