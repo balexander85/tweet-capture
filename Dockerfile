@@ -5,7 +5,7 @@ ARG app_dependencies="fonts-takao-mincho fonts-deva-extra"
 ARG virtualenv_name="tweetcapture-env"
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
 WORKDIR /app
-COPY tweetcapture.py \
+COPY tweetcapture/ \
      setup.py \
      requirements.txt \
      README.md \
