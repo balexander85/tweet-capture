@@ -5,7 +5,7 @@ from platform import platform
 from furl import furl
 import pytest
 
-from tweetcapture import (
+from tweetcapture.tweetcapture import (
     TweetCapture,
     # dismiss_sensitive_material_warning,
 )

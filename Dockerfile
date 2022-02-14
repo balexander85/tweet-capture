@@ -1,6 +1,8 @@
 FROM python:buster
+ENV PYTHONPATH "${PYTHONPATH}:/app"
 ARG build_dependencies="git aptitude"
 ARG app_dependencies="fonts-takao-mincho fonts-deva-extra"
+ARG virtualenv_name="tweetcapture-env"
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
 WORKDIR /app
 COPY tweetcapture.py \
@@ -19,9 +21,9 @@ RUN apt-get update \
  # Create Virtual Environment
  && python -m venv /tweetcapture-env \
  # Activate Virtual Environment
- && . /tweetcapture-env/bin/activate \
- && python -m pip install --upgrade pip \
- && python -m pip install -e . \
+ && . /$virtualenv_name/bin/activate \
+ && /$virtualenv_name/bin/python -m pip install --upgrade pip \
+ && /$virtualenv_name/bin/python -m pip install -e . \
  # Cleanup unnecessary stuff
  && apt-get purge -y --auto-remove \
                   -o APT::AutoRemove::RecommendsImportant=false \
