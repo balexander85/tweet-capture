@@ -1,9 +1,9 @@
 version: '3.7'
 services:
-  tweet_capture:
-    build: .
+  app_test:
+    image: balexander85/tweetcapture
+    container_name: tweetcapture_test
     command: /tweetcapture-env/bin/python -m pytest -vv .
-    image: balexander85/tweetcapture_test
-    #volumes:
-    #  - ./screenshots:/usr/src/screenshots
-    #  - ${PWD}/tests/test_tweet_capture.py:/app/test_tweet_capture.py
+    volumes:
+      - .:/app/tests
+      - ./screenshots:/app/screenshots
