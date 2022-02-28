@@ -18,7 +18,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from wrappeddriver.waits import wait_for_element_to_be_visible_by_css
-from wrappeddriver.wrappeddriver import WrappedDriver
+from wrappeddriver import WrappedDriver
 
 
 logging.basicConfig(
