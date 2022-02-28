@@ -2,7 +2,7 @@
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
-FILES=$(git diff --diff-filter=rd --cached --name-only -- . ':!README*' ':!*.yml' ':!*.json' ':!*.txt' ':!*.gitignore' ':!hooks/pre-commit' ':!*.sh' ':!Dockerfile' | sed 's| |\\ |g')
+FILES=$(git diff --diff-filter=rd --cached --name-only -- . ':!MANIFEST*' ':!README*' ':!*.yml' ':!*.json' ':!*.txt' ':!*.gitignore' ':!hooks/pre-commit' ':!*.sh' ':!Dockerfile' | sed 's| |\\ |g')
 [ -z "$FILES" ] && exit 0
 
 
