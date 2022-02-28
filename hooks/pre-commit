@@ -1,0 +1,31 @@
+#!/bin/sh
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+FILES=$(git diff --diff-filter=rd --cached --name-only -- . ':!README*' ':!*.yml' ':!*.json' ':!*.txt' ':!*.gitignore' ':!hooks/pre-commit' ':!*.sh' ':!Dockerfile' | sed 's| |\\ |g')
+[ -z "$FILES" ] && exit 0
+
+
+if [ -n "$FILES" ] && [ "$branch" = "main" ]; then
+  printf "You can't commit directly to main branch for non-trivial files \n%s" "$FILES"
+  exit 1
+fi
+
+
+# Run pylint all selected files
+pylint $(find . -name "*.py" | xargs) || exit 1
+
+# Run black formatter all selected files
+echo "$FILES" | xargs black
+
+# Reset the modified/prettified files to staging
+echo "$FILES" | xargs git reset
+
+# Run automated tests
+python -m pytest -vv tests/ || exit 1
+
+# Add back the modified/prettified files to staging
+echo "$FILES" | xargs git add
+
+exit 0
+

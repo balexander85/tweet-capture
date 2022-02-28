@@ -13,8 +13,8 @@ RUN apt-get update \
   && python -m venv /$virtualenv_name \
   # Activate Virtual Environment
   && . /$virtualenv_name/bin/activate \
-  && /$virtualenv_name/bin/python -m pip install --upgrade pip \
-  && /$virtualenv_name/bin/python -m pip install -r requirements.txt \
+  && python -m pip install --upgrade pip \
+  && python -m pip install -r requirements.txt \
   # Cleanup unnecessary stuff
   && apt-get purge -y --auto-remove \
                    -o APT::AutoRemove::RecommendsImportant=false \
