@@ -30,6 +30,8 @@ SCREEN_SHOT_DIR_PATH = "screenshots"
         "https://twitter.com/pastormarkburns/status/1268887999934353410",
         "https://twitter.com/washingtonpost/status/1268854962525798400",
         "https://twitter.com/satyagodara/status/1487699359739174913",
+        "https://twitter.com/FUCK_A_SOUL/status/1554119982954360832",
+        "https://twitter.com/RT_OnlyWill/status/1485923586812841984",
     ],
 )
 def test_tweet_screen_shot_tweet(url):
