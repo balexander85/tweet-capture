@@ -1,6 +1,6 @@
-FROM python:buster
+FROM python:slim-buster
 ARG test_dependencies="chromium-driver"
-ARG app_dependencies="fonts-takao-mincho fonts-deva-extra fonts-wqy-zenhei"
+ARG app_dependencies="git fonts-takao-mincho fonts-deva-extra fonts-wqy-zenhei"
 ARG virtualenv_name="tweetcapture-env"
 LABEL maintainer="Brian A <brian@dadgumsalsa.com>"
 WORKDIR /app
